@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>타자 연습</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        let startTime;
+        
+        function startTyping() {
+            document.getElementById("user_input").value = "";
+            startTime = new Date().getTime();
+        }
+
+        function checkInput(event) {
+            if (event.key === "Enter") {
+                let endTime = new Date().getTime();
+                let elapsedTime = (endTime - startTime) / 1000;
+                
+                let correctText = document.getElementById("word_display").innerText;
+                let userText = document.getElementById("user_input").value;
+
+                let src = correctText.split("");
+                let tar = userText.split("");
+
+                let correct = 0;
+                for (let i = 0; i < Math.min(src.length, tar.length); i++) {
+                    if (src[i] === tar[i]) correct++;
+                }
+
+                let accuracy = (correct / src.length) * 100;
+                let speed = (correct / elapsedTime) * 60;
+
+                document.getElementById("result").innerText = 
+                    `속도: ${speed.toFixed(2)} 타/분 | 정확도: ${accuracy.toFixed(2)}%`;
+
+                startTyping();
+            }
+        }
+    </script>
+</head>
+<body onload="startTyping()">
+    <div class="container">
+        <h2>타자 연습</h2>
+        <p id="word_display">{{ word_list[0] if word_list else "단어가 없습니다." }}</p>
+        <input type="text" id="user_input" onkeydown="checkInput(event)">
+        <p id="result"></p>
+    </div>
+</body>
+</html>
